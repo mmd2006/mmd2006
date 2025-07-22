@@ -22,7 +22,6 @@ func CreateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 
-	// ✅ درست گرفتن claims بدون pointer
 	user := c.Get("user")
 	claims := user.(jwt.MapClaims)
 
