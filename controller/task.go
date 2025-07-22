@@ -57,12 +57,23 @@ func GetTasks(c echo.Context) error {
 	user := c.Get("user").(jwt.MapClaims)
 	userIDHex := user["user_id"].(string)
 
-	userID, err := primitive.ObjectIDFromHex(userIDHex)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid user id"})
+	role, ok := user["role"].(string)
+	if !ok {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid role in token"})
 	}
 
-	cursor, err := config.TaskCollection.Find(ctx, bson.M{"user_id": userID})
+	var filter bson.M
+	if role == "admin" {
+		filter = bson.M{}
+	} else {
+		userID, err := primitive.ObjectIDFromHex(userIDHex)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid user ID"})
+		}
+		filter = bson.M{"user_id": userID}
+	}
+
+	cursor, err := config.TaskCollection.Find(ctx, filter)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}

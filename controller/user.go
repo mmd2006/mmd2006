@@ -27,7 +27,7 @@ func Signup(c echo.Context) error {
 	user := model.User{
 		Username: input.Username,
 		Password: input.Password,
-		Role:     "user",
+		Role:     "admin",
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -86,4 +86,21 @@ func Login(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, echo.Map{"token": signedToken})
+}
+
+func GetUsers(e echo.Context) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	cursor, err := config.UserCollection.Find(ctx, bson.M{})
+	if err != nil {
+		return e.JSON(http.StatusInternalServerError, echo.Map{"error": "database error"})
+	}
+
+	var users []model.User
+	if err = cursor.All(ctx, &users); err != nil {
+		return e.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
+	}
+
+	return e.JSON(http.StatusOK, echo.Map{"users": users})
 }

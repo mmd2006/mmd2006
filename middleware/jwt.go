@@ -41,9 +41,12 @@ func RequireRole(requireRole string) echo.MiddlewareFunc {
 	return func(next echo.HandlerFunc) echo.HandlerFunc {
 		return func(c echo.Context) error {
 			user := c.Get("user")
-			claims := user.(*jwt.MapClaims)
+			claims := user.(jwt.MapClaims)
 
-			role := (*claims)["role"]
+			role, ok := claims["role"].(string)
+			if !ok {
+				return c.JSON(http.StatusForbidden, echo.Map{"message": "invalid role format"})
+			}
 			if role != requireRole {
 				return c.JSON(http.StatusForbidden, echo.Map{"message": "you are not allowed to access this resource"})
 			}

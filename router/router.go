@@ -11,6 +11,7 @@ func InitRoutes(e *echo.Echo) {
 		return c.String(200, "Welcome ToDoAPP API ")
 	})
 	e.GET("/admin/tasks", controller.GetTasks, middleware.JWTMiddleware, middleware.RequireRole("admin"))
+	e.GET("/admin/users", controller.GetUsers, middleware.JWTMiddleware, middleware.RequireRole("admin"))
 
 	e.POST("/tasks", controller.CreateTask, middleware.JWTMiddleware)
 	e.GET("/tasks", controller.GetTasks, middleware.JWTMiddleware)
