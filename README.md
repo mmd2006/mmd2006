@@ -25,6 +25,7 @@ cd ToDoApp
 # 2. اضافه کردن فایل .env با محتویات زیر:
 JWT_SECRET=your_secret_key
 MONGODB_URI=mongodb+srv://reza1385312:JC9T75d8oZGPbqaa@cluster0.j7sguxp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+PORT=1323
 
 # 3. نصب پکیج‌ها
 go mod tidy
