@@ -19,7 +19,7 @@
 
 ```bash
 # 1. کلون کردن پروژه
-git clone https://github.com/mmd2006/ToDoApp.git
+git clone https://github.com/mmd2006/mmd2006
 cd ToDoApp
 
 # 2. اضافه کردن فایل .env با محتویات زیر:
