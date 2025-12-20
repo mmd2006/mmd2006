@@ -24,7 +24,7 @@ cd ToDoApp
 
 # 2. اضافه کردن فایل .env با محتویات زیر:
 JWT_SECRET=your_secret_key
-MONGODB_URI=mongodb+srv://reza1385312:JC9T75d8oZGPbqaa@cluster0.j7sguxp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+MONGODB_URI=mongodb+srv://reza1385312:JC9T75d8oZGPbqaa@cluster0.j7sguxp.mongodb.net/?appName=Cluster0
 PORT=1323
 
 # 3. نصب پکیج‌ها
@@ -57,6 +57,45 @@ go run main.go
 ```
 ---
 
+# 🔑 حساب کاربری پیش‌فرض ادمین
+
+برای ورود با ادمین:
+
+Username: admin
+
+Password: admin123
+
+URL: http://localhost:1323
+
+پس از لاگین، توکن JWT دریافت می‌کنید که برای تمام درخواست‌های محافظت‌شده لازم است.
+
+---
+
+# 📦 ساختار کالکشن‌ها (MongoDB)
+
+## Task Collection (tasks)
+| فیلد          | نوع      | توضیح                |
+| ------------- | -------- | -------------------- |
+| `_id`         | ObjectID | شناسه یکتا           |
+| `user_id`     | ObjectID | شناسه کاربر مالک تسک |
+| `title`       | string   | عنوان تسک            |
+| `description` | string   | توضیحات (اختیاری)    |
+| `completed`   | bool     | وضعیت انجام شدن تسک  |
+
+---
+
+## User Collection (users)
+| فیلد       | نوع      | توضیح                    |
+| ---------- | -------- | ------------------------ |
+| `_id`      | ObjectID | شناسه یکتا               |
+| `username` | string   | نام کاربری               |
+| `password` | string   | هش رمز عبور              |
+| `role`     | string   | نقش کاربر (`user/admin`) |
+
+
+---
+
+## مسیرهای API
 | متد    | مسیر           | توضیح                          | سطح دسترسی    |
 | ------ | -------------- | ------------------------------ | ------------- |
 | POST   | `/signup`      | ساخت حساب کاربری جدید          | عمومی         |
@@ -70,5 +109,6 @@ go run main.go
 | GET    | `/admin/users` | دریافت لیست کاربران            | فقط ادمین     |
 
 ---
+
 
 Mohammadreza https://github.com/mmd2006/mmd2006

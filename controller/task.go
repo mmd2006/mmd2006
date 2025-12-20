@@ -115,13 +115,19 @@ func GetTaskByID(c echo.Context) error {
 	defer cancel()
 
 	user := c.Get("user").(jwt.MapClaims)
+	role := user["role"].(string)
 	userIDHex := user["user_id"].(string)
-	userID, err := primitive.ObjectIDFromHex(userIDHex)
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid user id"})
-	}
 
-	filter := bson.M{"_id": objectID, "user_id": userID}
+	var filter bson.M
+	if role == model.RoleAdmin {
+		filter = bson.M{"_id": objectID} // ادمین هر تسکی
+	} else {
+		userID, err := primitive.ObjectIDFromHex(userIDHex)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid user id"})
+		}
+		filter = bson.M{"_id": objectID, "user_id": userID} // کاربر معمولی فقط خودش
+	}
 
 	var task model.Task
 	err = config.TaskCollection.FindOne(ctx, filter).Decode(&task)
@@ -153,13 +159,19 @@ func UpdateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
 	}
 	user := c.Get("user").(jwt.MapClaims)
+	role := user["role"].(string)
 	userIDHex := user["user_id"].(string)
 	userID, _ := primitive.ObjectIDFromHex(userIDHex)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"_id": objectID, "user_id": userID}
+	var filter bson.M
+	if role == model.RoleAdmin {
+		filter = bson.M{"_id": objectID} // ادمین میتونه هر تسکی آپدیت کنه
+	} else {
+		filter = bson.M{"_id": objectID, "user_id": userID} // کاربر معمولی فقط خودش
+	}
 	update := bson.M{
 		"$set": bson.M{
 			"title":       input.Title,
@@ -186,13 +198,19 @@ func DeleteTask(c echo.Context) error {
 	}
 
 	user := c.Get("user").(jwt.MapClaims)
+	role := user["role"].(string)
 	userIDHex := user["user_id"].(string)
 	userID, _ := primitive.ObjectIDFromHex(userIDHex)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
-	filter := bson.M{"_id": objectID, "user_id": userID}
+	var filter bson.M
+	if role == model.RoleAdmin {
+		filter = bson.M{"_id": objectID} // ادمین میتونه هر تسکی حذف کنه
+	} else {
+		filter = bson.M{"_id": objectID, "user_id": userID} // کاربر معمولی فقط خودش
+	}
 
 	result, err := config.TaskCollection.DeleteOne(ctx, filter)
 	if err != nil {

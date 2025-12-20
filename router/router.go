@@ -14,15 +14,15 @@ func InitRoutes(e *echo.Echo) {
 	})
 
 	adminGroup := e.Group("/admin", middleware.JWTMiddleware)
-	adminGroup.GET("/admin/tasks", controller.GetTasks, middleware.RequireRole("admin"))
-	adminGroup.GET("/admin/users", controller.GetUsers, middleware.RequireRole("admin"))
+	adminGroup.GET("/tasks", controller.GetTasks, middleware.RequireRole("admin"))
+	adminGroup.GET("/users", controller.GetUsers, middleware.RequireRole("admin"))
 
 	userGroup := e.Group("/tasks", middleware.JWTMiddleware)
-	userGroup.POST("/tasks", controller.CreateTask)
-	userGroup.GET("/tasks", controller.GetTasks)
-	userGroup.GET("/tasks/:id", controller.GetTaskByID)
-	userGroup.PUT("/tasks/:id", controller.UpdateTask)
-	userGroup.DELETE("/tasks/:id", controller.DeleteTask)
+	userGroup.POST("", controller.CreateTask)
+	userGroup.GET("", controller.GetTasks)
+	userGroup.GET("/:id", controller.GetTaskByID)
+	userGroup.PUT("/:id", controller.UpdateTask)
+	userGroup.DELETE("/:id", controller.DeleteTask)
 
 }
 
