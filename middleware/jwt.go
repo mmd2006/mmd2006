@@ -2,11 +2,12 @@ package middleware
 
 import (
 	"fmt"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/labstack/echo/v4"
 	"net/http"
 	"os"
 	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/labstack/echo/v4"
 )
 
 func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
@@ -17,11 +18,18 @@ func JWTMiddleware(next echo.HandlerFunc) echo.HandlerFunc {
 		}
 
 		tokenString := strings.TrimPrefix(authHeader, "Bearer ")
+		tokenString = strings.TrimSpace(tokenString)
 
 		claims := jwt.MapClaims{}
 		jwtSecret := os.Getenv("JWT_SECRET")
+		if jwtSecret == "" {
+			return c.JSON(http.StatusInternalServerError, echo.Map{"message": "JWT secret not configured"})
+		}
 
 		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+				return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+			}
 			return []byte(jwtSecret), nil
 		})
 

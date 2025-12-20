@@ -5,13 +5,14 @@ import (
 	"ToDoAPP/model"
 	"ToDoAPP/validation"
 	"context"
+	"net/http"
+	"os"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"golang.org/x/crypto/bcrypt"
-	"net/http"
-	"os"
-	"time"
 )
 
 func Signup(c echo.Context) error {
@@ -27,7 +28,7 @@ func Signup(c echo.Context) error {
 	user := model.User{
 		Username: input.Username,
 		Password: input.Password,
-		Role:     "admin",
+		Role:     model.RoleUser,
 	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
@@ -37,6 +38,7 @@ func Signup(c echo.Context) error {
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "database error"})
 	}
+
 	if count > 0 {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "username already exists"})
 	}
@@ -55,8 +57,12 @@ func Signup(c echo.Context) error {
 }
 
 func Login(c echo.Context) error {
-	var input model.User
+	var input validation.SignupInput
 	if err := c.Bind(&input); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
+	}
+
+	if err := input.Validate(); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
 	}
 
@@ -102,5 +108,14 @@ func GetUsers(e echo.Context) error {
 		return e.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}
 
-	return e.JSON(http.StatusOK, echo.Map{"users": users})
+	response := make([]map[string]interface{}, len(users))
+	for i, u := range users {
+		response[i] = map[string]interface{}{
+			"id":       u.ID.Hex(),
+			"username": u.Username,
+			"role":     u.Role,
+		}
+	}
+
+	return e.JSON(http.StatusOK, echo.Map{"users": response})
 }

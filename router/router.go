@@ -12,14 +12,17 @@ func InitRoutes(e *echo.Echo) {
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, map[string]string{"message": "ToDoAPP API is running"})
 	})
-	e.GET("/admin/tasks", controller.GetTasks, middleware.JWTMiddleware, middleware.RequireRole("admin"))
-	e.GET("/admin/users", controller.GetUsers, middleware.JWTMiddleware, middleware.RequireRole("admin"))
 
-	e.POST("/tasks", controller.CreateTask, middleware.JWTMiddleware)
-	e.GET("/tasks", controller.GetTasks, middleware.JWTMiddleware)
-	e.GET("/tasks/:id", controller.GetTaskByID, middleware.JWTMiddleware)
-	e.PUT("/tasks/:id", controller.UpdateTask, middleware.JWTMiddleware)
-	e.DELETE("/tasks/:id", controller.DeleteTask, middleware.JWTMiddleware)
+	adminGroup := e.Group("/admin", middleware.JWTMiddleware)
+	adminGroup.GET("/admin/tasks", controller.GetTasks, middleware.RequireRole("admin"))
+	adminGroup.GET("/admin/users", controller.GetUsers, middleware.RequireRole("admin"))
+
+	userGroup := e.Group("/tasks", middleware.JWTMiddleware)
+	userGroup.POST("/tasks", controller.CreateTask)
+	userGroup.GET("/tasks", controller.GetTasks)
+	userGroup.GET("/tasks/:id", controller.GetTaskByID)
+	userGroup.PUT("/tasks/:id", controller.UpdateTask)
+	userGroup.DELETE("/tasks/:id", controller.DeleteTask)
 
 }
 

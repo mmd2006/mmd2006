@@ -5,12 +5,13 @@ import (
 	"ToDoAPP/model"
 	"ToDoAPP/validation"
 	"context"
+	"net/http"
+	"time"
+
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/labstack/echo/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"net/http"
-	"time"
 )
 
 func CreateTask(c echo.Context) error {
@@ -47,7 +48,13 @@ func CreateTask(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": "database error"})
 	}
 
-	return c.JSON(http.StatusCreated, task)
+	return c.JSON(http.StatusCreated, echo.Map{
+		"id":          task.ID.Hex(),
+		"user_id":     task.UserID.Hex(),
+		"title":       task.Title,
+		"description": task.Description,
+		"completed":   task.Completed,
+	})
 }
 
 func GetTasks(c echo.Context) error {
@@ -63,7 +70,7 @@ func GetTasks(c echo.Context) error {
 	}
 
 	var filter bson.M
-	if role == "admin" {
+	if role == model.RoleAdmin {
 		filter = bson.M{}
 	} else {
 		userID, err := primitive.ObjectIDFromHex(userIDHex)
@@ -82,7 +89,19 @@ func GetTasks(c echo.Context) error {
 	if err = cursor.All(ctx, &tasks); err != nil {
 		return c.JSON(http.StatusInternalServerError, echo.Map{"error": err.Error()})
 	}
-	return c.JSON(http.StatusOK, tasks)
+
+	response := make([]map[string]interface{}, len(tasks))
+	for i, t := range tasks {
+		response[i] = map[string]interface{}{
+			"id":          t.ID.Hex(),
+			"user_id":     t.UserID.Hex(),
+			"title":       t.Title,
+			"description": t.Description,
+			"completed":   t.Completed,
+		}
+	}
+
+	return c.JSON(http.StatusOK, response)
 }
 
 func GetTaskByID(c echo.Context) error {
@@ -110,7 +129,13 @@ func GetTaskByID(c echo.Context) error {
 		return c.JSON(http.StatusNotFound, echo.Map{"error": "task not found"})
 	}
 
-	return c.JSON(http.StatusOK, task)
+	return c.JSON(http.StatusOK, echo.Map{
+		"id":          task.ID.Hex(),
+		"user_id":     task.UserID.Hex(),
+		"title":       task.Title,
+		"description": task.Description,
+		"completed":   task.Completed,
+	})
 }
 
 func UpdateTask(c echo.Context) error {
@@ -120,11 +145,13 @@ func UpdateTask(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid ID format"})
 	}
 
-	var updateData model.Task
-	if err := c.Bind(&updateData); err != nil {
+	var input validation.TaskInput
+	if err := c.Bind(&input); err != nil {
 		return c.JSON(http.StatusBadRequest, echo.Map{"error": "invalid input"})
 	}
-
+	if err := input.Validate(); err != nil {
+		return c.JSON(http.StatusBadRequest, echo.Map{"error": err.Error()})
+	}
 	user := c.Get("user").(jwt.MapClaims)
 	userIDHex := user["user_id"].(string)
 	userID, _ := primitive.ObjectIDFromHex(userIDHex)
@@ -135,9 +162,8 @@ func UpdateTask(c echo.Context) error {
 	filter := bson.M{"_id": objectID, "user_id": userID}
 	update := bson.M{
 		"$set": bson.M{
-			"title":       updateData.Title,
-			"description": updateData.Description,
-			"completed":   updateData.Completed,
+			"title":       input.Title,
+			"description": input.Description,
 		},
 	}
 
