@@ -3,20 +3,26 @@ package main
 import (
 	"ToDoAPP/config"
 	"ToDoAPP/router"
-	"github.com/joho/godotenv"
-	"github.com/labstack/echo/v4"
 	"log"
 	"os"
+
+	"github.com/joho/godotenv"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
+
 	if err := godotenv.Load(); err != nil {
-		log.Println()
+		log.Println("no .env file found, using system env")
 	}
 
 	config.ConnectMongo()
 
 	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	router.AuthRoutes(e)
 	router.InitRoutes(e)

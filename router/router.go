@@ -3,12 +3,14 @@ package router
 import (
 	"ToDoAPP/controller"
 	"ToDoAPP/middleware"
+	"net/http"
+
 	"github.com/labstack/echo/v4"
 )
 
 func InitRoutes(e *echo.Echo) {
 	e.GET("/", func(c echo.Context) error {
-		return c.String(200, "Welcome ToDoAPP API ")
+		return c.JSON(http.StatusOK, map[string]string{"message": "ToDoAPP API is running"})
 	})
 	e.GET("/admin/tasks", controller.GetTasks, middleware.JWTMiddleware, middleware.RequireRole("admin"))
 	e.GET("/admin/users", controller.GetUsers, middleware.JWTMiddleware, middleware.RequireRole("admin"))
