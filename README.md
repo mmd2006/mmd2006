@@ -34,29 +34,33 @@ go mod tidy
 # 4. اجرای پروژه
 go run main.go
 
-ساختار پروژه
-go
-```plaintext
+---
+
+## ساختار پروژه
+
 📁 ToDoApp
 ├─ main.go
 ├─ go.mod
 ├─ .env
 ├─ config/
-│  └─ mongo.go
+│ └─ mongo.go
 ├─ controller/
-│  ├─ task.go
-│  └─ user.go
+│ ├─ task.go
+│ └─ user.go
 ├─ middleware/
-│  └─ jwt.go
+│ └─ jwt.go
 ├─ model/
-│  ├─ task.go
-│  └─ user.go
+│ ├─ task.go
+│ └─ user.go
 ├─ router/
-│  └─ router.go
+│ └─ router.go
 └─ validation/
-   ├─ task.go
-   └─ user.go
-...   
+├─ task.go
+└─ user.go
+
+---
+
+## API Endpoints
 
 | متد    | مسیر           | توضیح                          | سطح دسترسی    |
 | ------ | -------------- | ------------------------------ | ------------- |
@@ -70,26 +74,25 @@ go
 | GET    | `/admin/tasks` | دریافت تمام تسک‌ها             | فقط ادمین     |
 | GET    | `/admin/users` | دریافت لیست کاربران            | فقط ادمین     |
 
+---
 
-توضیح: مسیرهای /admin/... فقط برای ادمین و مسیرهای /tasks/... برای کاربر لاگین شده قابل دسترسی هستند.
+## تست API با Postman
 
-تست API با Postman
-پروژه را اجرا کنید (go run main.go)
+1. **اجرای پروژه**:
+   پروژه را با دستور زیر اجرا کنید:
+   ```bash
+   go run main.go
 
-از Postman برای تست endpoint ها استفاده کنید:
+---   
 
-ابتدا /signup یا /login برای دریافت JWT
+## امنیت
 
-سپس JWT را در header به شکل Authorization: Bearer <token> قرار دهید
+- **JWT** برای احراز هویت و **Role-based Access Control** برای مدیریت نقش‌ها (کاربر / ادمین) استفاده می‌شود.
+- رمز عبور کاربران با **bcrypt** هش شده و در دیتابیس ذخیره می‌شود.
+- فایل `.env` شامل اطلاعات حساس است و نباید در گیت‌هاب قرار گیرد.
 
-بعد از آن می‌توانید مسیرهای /tasks و /admin/... را تست کنید
+---
 
-امنیت
-JWT برای احراز هویت و Role-based Access Control برای مدیریت نقش‌ها
+## لینک‌ها
 
-رمز عبور کاربران با bcrypt هش شده و در دیتابیس ذخیره می‌شود
-
-فایل .env شامل اطلاعات حساس است و نباید در گیت‌هاب قرار گیرد
-
-لینک‌ها
-GitHub: https://github.com/mmd2006/mmd2006
+- **GitHub**: [https://github.com/mmd2006/mmd2006](https://github.com/mmd2006/mmd2006)
