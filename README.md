@@ -1,11 +1,11 @@
-# ToDoApp
+#  ToDoApp
 
-یک RESTful API ساده برای مدیریت تسک‌ها (Tasks) با زبان Go، دیتابیس MongoDB و فریمورک Echo.  
-این پروژه شامل احراز هویت JWT، مدیریت نقش (کاربر / ادمین) و عملیات کامل CRUD است.
+یک RESTful API ساده برای مدیریت تسک‌ها (Tasks) با استفاده از زبان Go، دیتابیس MongoDB و فریمورک Echo.  
+این پروژه شامل احراز هویت JWT، مدیریت نقش (کاربر / ادمین)، و عملیات کامل CRUD می‌باشد.
 
 ---
 
-## تکنولوژی‌های استفاده‌شده
+##  تکنولوژی‌های استفاده‌شده
 
 - [Go](https://golang.org/)
 - [Echo Framework](https://echo.labstack.com/)
@@ -15,17 +15,16 @@
 
 ---
 
-## نصب و اجرا
+## ⚙️ نصب و اجرا
 
 ```bash
 # 1. کلون کردن پروژه
 git clone https://github.com/mmd2006/mmd2006
 cd ToDoApp
 
-# 2. اضافه کردن فایل .env (نمونه)
-# ⚠️ لطفاً اطلاعات حساس واقعی را وارد نکنید، فقط نمونه:
+# 2. اضافه کردن فایل .env با محتویات زیر:
 JWT_SECRET=your_secret_key
-MONGODB_URI=your_mongodb_uri_here
+MONGODB_URI=mongodb+srv://reza1385312:JC9T75d8oZGPbqaa@cluster0.j7sguxp.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
 PORT=1323
 
 # 3. نصب پکیج‌ها
@@ -34,33 +33,29 @@ go mod tidy
 # 4. اجرای پروژه
 go run main.go
 
----
-
-## ساختار پروژه
-
+```
+```plaintext
 📁 ToDoApp
 ├─ main.go
 ├─ go.mod
 ├─ .env
 ├─ config/
-│ └─ mongo.go
+│  └─ mongo.go
 ├─ controller/
-│ ├─ task.go
-│ └─ user.go
+│  ├─ task.go
+│  └─ user.go
 ├─ middleware/
-│ └─ jwt.go
+│  └─ jwt.go
 ├─ model/
-│ ├─ task.go
-│ └─ user.go
+│  ├─ task.go
+│  └─ user.go
 ├─ router/
-│ └─ router.go
+│  └─ router.go
 └─ validation/
-├─ task.go
-└─ user.go
-
+   ├─ task.go
+   └─ user.go
+```
 ---
-
-## API Endpoints
 
 | متد    | مسیر           | توضیح                          | سطح دسترسی    |
 | ------ | -------------- | ------------------------------ | ------------- |
@@ -69,30 +64,11 @@ go run main.go
 | GET    | `/tasks`       | دریافت تمام تسک‌های کاربر فعلی | کاربر / ادمین |
 | POST   | `/tasks`       | ساخت تسک جدید                  | کاربر / ادمین |
 | GET    | `/tasks/:id`   | دریافت تسک خاص متعلق به کاربر  | کاربر / ادمین |
-| PUT    | `/tasks/:id`   | ویرایش تسک (در صورت مالک بودن)| کاربر / ادمین |
-| DELETE | `/tasks/:id`   | حذف تسک (در صورت مالک بودن)   | کاربر / ادمین |
+| PUT    | `/tasks/:id`   | ویرایش تسک (در صورت مالک بودن) | کاربر / ادمین |
+| DELETE | `/tasks/:id`   | حذف تسک (در صورت مالک بودن)    | کاربر / ادمین |
 | GET    | `/admin/tasks` | دریافت تمام تسک‌ها             | فقط ادمین     |
 | GET    | `/admin/users` | دریافت لیست کاربران            | فقط ادمین     |
 
 ---
 
-## تست API با Postman
-
-1. **اجرای پروژه**:
-   پروژه را با دستور زیر اجرا کنید:
-   ```bash
-   go run main.go
-
----   
-
-## امنیت
-
-- **JWT** برای احراز هویت و **Role-based Access Control** برای مدیریت نقش‌ها (کاربر / ادمین) استفاده می‌شود.
-- رمز عبور کاربران با **bcrypt** هش شده و در دیتابیس ذخیره می‌شود.
-- فایل `.env` شامل اطلاعات حساس است و نباید در گیت‌هاب قرار گیرد.
-
----
-
-## لینک‌ها
-
-- **GitHub**: [https://github.com/mmd2006/mmd2006](https://github.com/mmd2006/mmd2006)
+Mohammadreza https://github.com/mmd2006/mmd2006
