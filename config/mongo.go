@@ -3,12 +3,13 @@ package config
 import (
 	"context"
 	"fmt"
-	"github.com/joho/godotenv"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
 	"log"
 	"os"
 	"time"
+
+	"github.com/joho/godotenv"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var Client *mongo.Client
@@ -19,7 +20,7 @@ var TaskCollection *mongo.Collection
 func ConnectMongo() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatalf("Error loading .env file")
+		log.Fatal("Error loading .env file")
 	}
 
 	mongoURI := os.Getenv("MONGODB_URI")
